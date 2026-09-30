@@ -92,6 +92,6 @@ See [the API contract](shared/contract.md) and [deployment configuration](DEPLOY
 
 ## License and assets
 
-This repository is private while its owner reviews public release and licensing. No project-wide open-source license has been applied yet. Third-party notices remain effective independently; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The bundled fonts retain their OFL license files.
+The application code is available under the [MIT License](LICENSE). Third-party assets and dependencies retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The bundled fonts retain their OFL license files. This license does not grant rights to third-party articles, videos or other source material that users annotate.
 
 The original generated media in this source handoff can be regenerated with `node scripts/source-preview.mjs`. It contains no downloaded videos, user uploads, or people.
