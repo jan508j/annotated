@@ -1,0 +1,32 @@
+services:
+  annotated:
+    build:
+      context: .
+      args:
+        BASE_URL: ${BASE_URL:?Set the final public HTTPS origin}
+        EXTENSION_PUBLIC_KEY: ${EXTENSION_PUBLIC_KEY:-}
+    environment:
+      APP_MODE: production
+      NODE_ENV: production
+      BASE_URL: ${BASE_URL:?Set the final public HTTPS origin}
+      HOST: 0.0.0.0
+      PORT: 4317
+      DATA_DIR: /var/lib/annotated
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?Set the Google web client ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?Set the Google web client secret}
+      EXTENSION_IDS: ${EXTENSION_IDS:?Set the allowed production extension IDs}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:?Set the verified operator email addresses}
+    ports:
+      - "127.0.0.1:4317:4317"
+    volumes:
+      - annotated-data:/var/lib/annotated
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 45s
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  annotated-data:

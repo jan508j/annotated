@@ -1,0 +1,30 @@
+{
+  "name": "annotated",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "dev": "node --env-file-if-exists=.env --watch server/index.mjs",
+    "test": "node --test test/*.test.mjs",
+    "check": "node scripts/check.mjs",
+    "package": "node scripts/package.mjs"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.80",
+    "@neon/config": "^1.7.3",
+    "@neon/env": "^1.4.4",
+    "@vercel/blob": "2.8.0",
+    "@vercel/functions": "3.9.9",
+    "ffmpeg-static": "5.2.0",
+    "ffprobe-static": "3.1.0",
+    "google-auth-library": "^10.9.1",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

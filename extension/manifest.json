@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Annotated — local demo",
+  "version": "0.1.24",
+  "description": "Discuss a precise excerpt from the page you are reading or watching.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "activeTab",
+    "offscreen",
+    "scripting",
+    "sidePanel",
+    "storage",
+    "tabCapture"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:4317/*",
+    "http://localhost:4317/*"
+  ],
+  "action": {
+    "default_title": "Open Annotated",
+    "default_icon": {
+      "16": "icons/citrus/icon-16.png",
+      "32": "icons/citrus/icon-32.png",
+      "48": "icons/citrus/icon-48.png",
+      "128": "icons/citrus/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "icons": {
+    "16": "icons/citrus/icon-16.png",
+    "32": "icons/citrus/icon-32.png",
+    "48": "icons/citrus/icon-48.png",
+    "128": "icons/citrus/icon-128.png"
+  }
+}

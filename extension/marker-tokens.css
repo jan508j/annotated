@@ -1,0 +1,79 @@
+/* Canonical Marker tokens. The web app serves this same file at /shared/marker-tokens.css. */
+@import url('./fonts.css');
+
+:root {
+  color-scheme: light;
+  --paper: #f6f5f1;
+  --surface: #ffffff;
+  --soft: #f3f2ee;
+  --segment: #ebe9e3;
+  --ink: #16161a;
+  --soft-ink: #4a4943;
+  --muted: #6b6a64;
+  --meta: #7a7972;
+  --faint: #8f8d84;
+  --line: #e4e2db;
+  --panel-line: #eeede8;
+  --disabled: #d8d6cf;
+  --red: #d64a3a;
+  --danger: #8b3028;
+  --profile-error: #b23b2e;
+  --green: oklch(0.6 0.14 150);
+  --coral: oklch(0.87 0.12 25);
+  --citrus: oklch(0.87 0.12 85);
+  --mint: oklch(0.87 0.12 150);
+  --sky: oklch(0.87 0.12 250);
+  --lilac: oklch(0.87 0.12 310);
+  --hue: 85;
+  --mark: oklch(0.87 0.12 var(--hue));
+  --mark-ink: oklch(0.45 0.14 var(--hue));
+  --accent: var(--ink);
+  --tint: var(--soft);
+  --accent-tint: var(--mark);
+  --sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --radius-card: 22px;
+  --radius-panel: 18px;
+  --radius-inner: 14px;
+  --radius-chip: 6px;
+  --radius-pill: 999px;
+  --shadow: 0 30px 60px rgba(20,20,20,.07);
+  --shadow-small: 0 2px 6px rgba(0,0,0,.06);
+  --motion-hover: 150ms;
+  --motion-press: 120ms;
+  --motion-row: 200ms;
+  --motion-hue: 900ms;
+  --motion-mark: 800ms;
+  --motion-range: 450ms;
+  --motion-cut: 700ms;
+  --ease-mark: cubic-bezier(.2,.8,.2,1);
+  --ease-cut: cubic-bezier(.2,.9,.25,1.15);
+}
+
+/* Register derived colors on each hue scope, including nested author avatars. */
+[data-marker] {
+  --mark: oklch(0.87 0.12 var(--hue));
+  --mark-ink: oklch(0.45 0.14 var(--hue));
+}
+[data-marker="0"] { --hue: 25; }
+[data-marker="1"] { --hue: 85; }
+[data-marker="2"] { --hue: 150; }
+[data-marker="3"] { --hue: 250; }
+[data-marker="4"] { --hue: 310; }
+mark, .marker-text {
+  color: var(--ink);
+  background: var(--mark);
+  padding: 1px 2px;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

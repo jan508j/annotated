@@ -1,0 +1,75 @@
+/* Feed-filter handoff. Existing cards and shared Marker tokens stay canonical. */
+body[data-route="feed"] .site-header { position: sticky; top: 0; background: var(--paper); }
+.feed-heading { align-items: center; flex-direction: row; margin-bottom: 28px; }
+.feed-heading .feed-write { flex: 0 0 auto; }
+.feed-filter-sentinel { height: 1px; margin-bottom: -1px; }
+.feed-filter-bar { position: sticky; top: var(--feed-nav-height, 96px); z-index: 4; display: flex; align-items: center; gap: 18px; padding-bottom: 17px; border-bottom: 1px solid transparent; background: var(--paper); }
+.feed-filter-bar::before { content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px; background: var(--paper); }
+.feed-filter-bar.is-stuck { border-bottom-color: var(--line); }
+.feed-audience-wrap { position: relative; flex: 0 0 auto; }
+.feed-radio-group { display: flex; gap: 4px; }
+.feed-audience { background: var(--segment); border-radius: var(--radius-pill); padding: 4px; gap: 2px; }
+.feed-radio-group button { appearance: none; border: 0; border-radius: var(--radius-pill); height: 40px; padding: 0 16px; background: transparent; color: var(--soft-ink); font: 500 14px var(--sans); cursor: pointer; transition: background-color var(--motion-row) ease, color var(--motion-row) ease, transform var(--motion-press) ease; }
+.feed-audience button { height: 36px; padding: 0 18px; color: var(--muted); }
+.feed-radio-group button:hover { color: var(--ink); }
+.feed-format button:hover { background: var(--segment); }
+.feed-radio-group button[aria-checked="true"] { color: var(--ink); font-weight: 600; }
+.feed-audience button[aria-checked="true"] { background: var(--surface); box-shadow: 0 1px 3px rgba(20,20,20,.1); }
+.feed-format button[aria-checked="true"] { background: var(--citrus); }
+.feed-radio-group button:focus-visible, .feed-signin-prompt :focus-visible, .feed-filter-empty :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.feed-radio-group button:active { transform: scale(.97); }
+.feed-filter-divider { width: 1px; height: 24px; background: var(--disabled); flex-shrink: 0; }
+.feed-sort-label { margin-left: auto; white-space: nowrap; font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--meta); }
+.feed-results { min-height: 260px; }
+.feed-sr-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.feed-filter-empty { border-top: 1px solid var(--line); padding: 64px 0 24px; display: flex; align-items: flex-start; flex-direction: column; gap: 22px; }
+.feed-filter-empty > p { max-width: 520px; margin: 0; color: var(--ink); font: 400 36px/1.15 var(--serif); letter-spacing: -.005em; text-wrap: pretty; }
+.feed-filter-empty .button { height: 44px; padding: 0 22px; font-size: 15px; }
+.feed-filter-empty .button:hover { background: var(--ink); color: var(--surface); transform: none; }
+.feed-signin-prompt { position: absolute; top: calc(100% + 12px); left: 0; z-index: 7; width: 300px; padding: 18px; border-radius: 16px; background: var(--surface); box-shadow: 0 20px 44px rgba(20,20,20,.14); }
+.feed-signin-prompt::before { content: ''; position: absolute; top: -6px; left: 154px; width: 12px; height: 12px; transform: rotate(45deg); background: var(--surface); }
+.feed-signin-prompt p { margin: 0 0 16px; font: 400 22px/1.2 var(--serif); }
+.feed-signin-actions { display: flex; align-items: center; gap: 16px; }
+.feed-signin-actions .button { min-height: 44px; }
+.feed-signin-actions .text-button { min-height: 44px; padding: 8px 2px; font: 500 14px var(--sans); color: var(--soft-ink); text-decoration: underline; text-underline-offset: 4px; }
+.feed-skeleton { display: flex; flex-direction: column; gap: 16px; padding: 28px 0; border-top: 1px solid var(--line); animation: feed-pulse 1.2s ease-in-out infinite; }
+.feed-skeleton:nth-child(2) { animation-delay: .15s; }
+.feed-skeleton span { display: block; border-radius: 8px; background: var(--segment); }
+.feed-skeleton-author { display: flex; align-items: center; gap: 10px; }
+.feed-skeleton .feed-skeleton-avatar { width: 28px; height: 28px; border-radius: 50%; }
+.feed-skeleton-name { width: 140px; height: 12px; }
+.feed-skeleton-take { width: 88%; height: 26px; }
+.feed-skeleton-take.short { width: 54%; }
+.feed-skeleton-meta { width: 32%; height: 10px; margin-top: 4px; }
+.feed-skeleton .feed-skeleton-excerpt { width: 96%; height: 14px; background: var(--soft); }
+.feed-skeleton .feed-skeleton-excerpt.short { width: 70%; }
+@keyframes feed-pulse { 50% { opacity: .48; } }
+@media (min-width: 640px) and (max-width: 760px) {
+  .feed-filter-bar { gap: 10px; }
+  .feed-format button { padding: 0 12px; }
+  .feed-audience button { padding: 0 14px; }
+}
+@media (max-width: 639px) {
+  .feed-page { width: calc(100% - 40px); }
+  .feed-heading { flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+  .feed-heading h1 { font-size: 36px; }
+  .feed-filter-bar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-bottom: 17px; }
+  .feed-audience-wrap { min-width: 0; }
+  .feed-radio-group { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .feed-audience { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .feed-radio-group button { height: 44px; padding: 0 8px; font-size: 15px; }
+  .feed-filter-divider { display: none; }
+  .feed-sort-label { display: none; }
+  .feed-filter-empty { padding-top: 48px; }
+  .feed-filter-empty > p { font-size: 30px; }
+  .feed-signin-prompt { width: 100%; border-radius: var(--radius-panel); padding: 20px; }
+  .feed-signin-prompt::before { left: calc(75% - 6px); }
+  .feed-signin-prompt p { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .feed-skeleton { animation: none; }
+  .feed-radio-group button, .feed-filter-empty .button, .feed-signin-prompt a, .feed-signin-prompt button { transition: none; }
+}
+/* Match the title-row action in the supplied final screenshot. */
+.feed-heading .feed-write { padding: 14px 22px; font-size: 15px; }
+@media (max-width: 639px) { .feed-heading .feed-write { padding: 12px 16px; font-size: 13px; } }

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci --omit=dev",
+  "buildCommand": "",
+  "regions": ["fra1"],
+  "functions": {
+    "api/index.mjs": {
+      "maxDuration": 180,
+      "includeFiles": "{web/**,shared/**,extension/*.css,extension/fonts/**,artifacts/production-extension.zip,node_modules/ffmpeg-static/ffmpeg,node_modules/ffprobe-static/bin/linux/x64/ffprobe}",
+      "excludeFiles": "{web/fixtures/**,node_modules/ffprobe-static/bin/darwin/**,node_modules/ffprobe-static/bin/win32/**,node_modules/ffprobe-static/bin/linux/ia32/**}"
+    }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }],
+  "crons": [{ "path": "/api/cron/media-cleanup", "schedule": "17 * * * *" }],
+  "headers": [{ "source": "/(.*)", "headers": [
+    { "key": "X-Content-Type-Options", "value": "nosniff" },
+    { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+  ] }]
+}

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Annotated</title>
+    <link rel="stylesheet" href="panel.css">
+    <link rel="stylesheet" href="share-sheet.css">
+  </head>
+  <body>
+    <header class="masthead">
+      <section id="source-card" class="source-card">
+        <span id="source-badge" aria-hidden="true"></span>
+        <div class="source-heading">
+          <h1><button id="source-title-toggle" type="button" aria-expanded="false"><span id="source-title">Connect a source</span></button></h1>
+          <p id="source-kind" class="mono">MARK THE EXACT PART</p>
+          <p id="source-author" class="byline hidden"></p>
+        </div>
+      </section>
+      <details class="account-menu">
+        <summary id="account-avatar" aria-label="Account and source menu">A</summary>
+        <div class="account-menu-content">
+          <div class="account-identity"><strong id="panel-user"></strong><span id="account-handle" class="mono"></span></div>
+          <a id="nav-feed" target="_blank" rel="noreferrer">Feed ↗</a>
+          <a id="nav-mine" class="hidden" target="_blank" rel="noreferrer">My annotations ↗</a>
+          <button id="refresh" class="text-button" type="button">Refresh this page</button>
+          <button id="logout" class="text-button hidden" type="button">Log out</button>
+        </div>
+      </details>
+    </header>
+    <nav class="panel-nav" aria-label="Annotated navigation">
+      <button id="compose-toggle" class="text-button" type="button" aria-current="page" aria-controls="compose">New</button>
+      <button id="nav-page" class="text-button" type="button" aria-controls="discussion">On this page · 0</button>
+    </nav>
+
+    <main id="panel-body">
+      <section id="notice" class="notice hidden" aria-live="polite"></section>
+
+      <section id="session-card" class="session-card">
+        <p id="session-eyebrow" class="eyebrow"></p>
+        <h1 id="session-title"></h1>
+        <p id="session-copy"></p>
+        <div id="local-login" class="button-row hidden">
+          <button class="button primary" type="button" data-persona="mira">Continue as Mira</button>
+          <button class="button secondary" type="button" data-persona="leo">Continue as Leo</button>
+        </div>
+        <div class="button-row">
+          <button id="google-login" class="button primary hidden" type="button">Continue with Google</button>
+          <button id="x-login" class="button secondary hidden" type="button">Continue with X</button>
+          <p id="x-login-status" class="support-note hidden">X sign-in is not available yet.</p>
+        </div>
+      </section>
+
+      <section id="paused-draft" class="session-card hidden" aria-labelledby="paused-draft-title">
+        <p class="eyebrow">UNFINISHED ANNOTATION</p>
+        <h2 id="paused-draft-title">Your draft is paused</h2>
+        <p id="paused-draft-source"></p>
+        <p>Switch back to that source tab to continue. Your take and attached passage are kept while this sidebar stays open.</p>
+        <button id="discard-paused-draft" class="button secondary" type="button">Discard draft and switch</button>
+      </section>
+
+      <div id="source-workspace" class="hidden">
+      <p id="support-note" class="support-note"></p>
+
+      <section id="compose" class="compose hidden collapsed" aria-label="Annotation composer">
+        <div id="publishing-status" class="status-state hidden" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Publishing…</span>
+        </div>
+        <div id="published-status" class="published-state hidden" role="status">
+          <div class="published-heading">
+            <span class="success-mark" aria-hidden="true">✓</span>
+            <div><strong>Published ✓</strong><span>Live on the feed.</span></div>
+          </div>
+          <article class="finished-card" aria-label="Finished annotation">
+            <p id="published-take-label" class="take-label"></p>
+            <p id="published-take" class="finished-take"></p>
+            <div class="finished-source">
+              <span id="published-source-meta" class="mono"></span>
+              <div id="published-excerpt" class="hidden"></div>
+              <p id="published-media-range" class="media-range hidden"></p>
+              <video id="published-video" class="source-player hidden" controls playsinline preload="metadata" aria-label="Published source excerpt"></video>
+              <audio id="published-audio" class="source-player hidden" controls preload="metadata" aria-label="Published source excerpt"></audio>
+              <p id="published-source-title" class="finished-source-title"></p>
+            </div>
+          </article>
+          <div class="share-actions" aria-label="Share annotation">
+            <button id="copy-link" class="button secondary" type="button">Copy link</button>
+            <a id="post-x" class="button secondary" target="_blank" rel="noreferrer">Post to X ↗</a>
+            <button id="share-image" class="button secondary" type="button">Share as image</button>
+          </div>
+          <div class="finished-footer">
+            <a id="open-annotation" target="_blank" rel="noreferrer">View full page ↗</a>
+            <button id="new-annotation" class="button primary" type="button">New annotation</button>
+          </div>
+        </div>
+
+        <div id="composer-content">
+          <section id="article-controls" class="selected-source article-selection hidden" aria-label="Highlighted passage">
+            <div class="marked-heading"><p class="take-label">MARKED</p><span id="highlight-count" class="mono"></span></div>
+            <div id="excerpt" class="hidden" aria-live="polite"></div>
+            <div id="selection-zone" class="selection-zone">
+              <p id="selection-hint" class="selection-hint">Highlight a passage on the page,<br>then add it here.</p>
+              <button id="use-selection" class="button secondary" type="button">Add selection</button>
+            </div>
+            <p id="selection-status" class="selection-status" role="status"></p>
+          </section>
+          <section id="media-source" class="selected-source" aria-labelledby="selected-source-label">
+            <div class="selected-source-heading">
+              <p id="selected-source-label" class="take-label">CLIP</p>
+              <div id="captured-chip" class="captured-chip hidden"><button id="rerecord" class="text-button" type="button">Retake</button></div>
+              <div id="time-chips" class="time-chips mono">
+                <input id="start-time" type="text" inputmode="decimal" value="0:00.0" aria-label="Exact start time" title="Type start time">
+                <span aria-hidden="true">→</span>
+                <input id="end-time" type="text" inputmode="decimal" value="0:00.0" aria-label="Exact end time" title="Type end time">
+                <span id="clip-duration">· 0:30</span>
+              </div>
+              <div id="progress-copy" class="progress-copy hidden">
+                <span class="recording-label"><span class="record-dot pulse"></span><span id="capture-progress-title">Recording</span></span>
+                <span id="progress-label" class="mono">Preparing…</span>
+              </div>
+            </div>
+          <p id="range-summary" class="range-summary" role="status"></p>
+          <div id="media-controls" class="hidden">
+            <div id="clip-timeline" class="clip-timeline" aria-label="Clip timeline">
+              <div id="clip-window" class="clip-window">
+                <div id="clip-range" class="clip-range"><span id="clip-fill"></span></div>
+                <button id="clip-start" class="clip-handle" type="button" role="slider" aria-label="Clip start" aria-valuemin="0" aria-valuemax="90" aria-valuenow="0"></button>
+                <button id="clip-end" class="clip-handle" type="button" role="slider" aria-label="Clip end" aria-valuemin="0" aria-valuemax="90" aria-valuenow="30"></button>
+                <span id="clip-playhead" class="clip-playhead" aria-hidden="true"></span>
+                <span id="clip-bubble" class="clip-bubble mono hidden" aria-hidden="true"></span>
+              </div>
+              <div class="clip-scale mono"><span id="clip-window-start">0:00</span><span id="clip-now" class="clip-now">▲ now</span><span id="clip-window-end">2:00</span></div>
+            </div>
+            <div id="media-setup">
+              <div id="player-choice">
+                <label class="label" for="media-select">Player</label>
+                <select id="media-select"></select>
+              </div>
+              <div class="clip-presets" role="group" aria-label="Recent clip presets">
+                <button id="preset-15" type="button" aria-pressed="false">Last 15s</button>
+                <button id="preset-30" type="button" aria-pressed="true">Last 30s</button>
+                <button id="range-here" type="button" aria-pressed="false">Next 30s</button>
+              </div>
+              <div id="playhead-links" class="playhead-links"><button id="set-start" class="set-playhead" type="button">Start at playhead</button><button id="set-end" class="set-playhead" type="button">End at playhead</button></div>
+              <p id="clip-help" class="clip-help">Drag the edges to adjust. Keep the player visible.</p>
+              <!-- Backing controls retain the existing range controller; visible chips and handles call it. -->
+              <div hidden inert aria-hidden="true">
+                <button id="mode-previous" type="button"></button><button id="mode-manual" type="button"></button>
+                <button id="preset-60" type="button"></button>
+                <div id="manual-range">
+                  <input id="range-start" type="hidden" value="0"><input id="range-end" type="hidden" value="0">
+                  <input id="range-start-visual" type="range" min="0" max="1" step="0.1" value="0">
+                  <input id="range-end-visual" type="range" min="0" max="1" step="0.1" value="1">
+                  <span id="range-start-label"></span><span id="range-end-label"></span><span id="range-start-scale"></span><span id="range-end-scale"></span>
+                  <button id="nudge-start-back" type="button"></button><button id="nudge-start-forward" type="button"></button>
+                  <button id="nudge-end-back" type="button"></button><button id="nudge-end-forward" type="button"></button>
+                </div>
+              </div>
+              <button id="record" class="button record" type="button"><span class="record-dot"></span>Capture clip</button>
+            </div>
+
+            <div id="progress" class="progress hidden" aria-live="polite">
+              <div class="progress-track"><span id="progress-bar"></span></div>
+              <p class="capture-warning">Keep the player visible and uncovered. Moving or resizing it stops the capture.</p>
+              <button id="cancel" class="button stop-capture" type="button" title="Stop and discard this recording" aria-label="Stop and discard recording">■ Stop</button>
+              <p class="stop-note">Stop discards this take.</p>
+            </div>
+
+            <div id="preview-wrap" class="preview-wrap hidden">
+              <span id="captured-range" class="mono"></span>
+              <video id="video-preview" controls playsinline preload="metadata" aria-label="Recorded source excerpt" class="hidden"></video>
+              <audio id="audio-preview" controls preload="metadata" aria-label="Recorded source excerpt" class="hidden"></audio>
+              <p id="preview-meta"></p>
+            </div>
+            <p id="capture-status" class="capture-status" role="status"></p>
+          </div>
+          </section>
+
+          <div id="compose-fields" class="compose-fields">
+            <div class="take-heading"><p id="take-label" class="take-label">YOUR TAKE</p>
+              <div class="take-modes" role="group" aria-label="Text input"><button id="take-write" type="button" aria-pressed="true">Write</button><button id="take-dictate" type="button" aria-pressed="false" title="Turn speech into text">Dictate</button></div>
+            </div>
+            <div id="write-take" class="write-take">
+            <label class="sr-only" for="commentary">Your take</label>
+            <textarea id="commentary" rows="4" maxlength="2000" placeholder="What should people notice?"></textarea>
+            <p id="dictation-privacy" class="dictation-privacy hidden">Listening… Chrome’s speech service may send audio to Google.</p>
+            <div class="dictation-toolbar">
+              <span id="dictation-status" class="dictation-status" role="status" aria-live="polite"></span>
+              <label class="sr-only" for="dictation-language">Dictation language</label>
+              <select id="dictation-language" class="dictation-language" title="Dictation language"><option value="en-US">EN</option><option value="cs-CZ">CS</option></select>
+              <button id="dictate" class="dictation-button" type="button" aria-label="Dictate your take" title="Dictate your take" aria-pressed="false" aria-describedby="dictation-privacy">
+                <svg class="mic-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/></svg>
+                <svg class="stop-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+              </button>
+            </div>
+            </div>
+            <details id="audio-note" class="audio-note">
+              <summary id="audio-note-label">Attach an audio note</summary>
+            <div id="voice-take" class="voice-take">
+              <div class="voice-heading">
+                <div>
+                  <span class="label">Audio note</span>
+                  <span class="voice-hint">Posts your recorded voice · 90 sec max</span>
+                </div>
+                <button id="voice-record" class="voice-button" type="button"><span class="record-dot"></span><span id="voice-record-label">Record audio note</span></button>
+              </div>
+              <div id="voice-recording" class="voice-recording hidden" aria-live="polite">
+                <span class="record-dot pulse"></span>
+                <span id="voice-status">Recording</span>
+                <strong id="voice-time" class="mono">0:00</strong>
+                <button id="voice-stop" class="text-button" type="button">Stop</button>
+                <button id="voice-cancel" class="text-button subtle" type="button">Cancel</button>
+              </div>
+              <div id="voice-preview" class="voice-preview hidden">
+                <div class="voice-playback">
+                  <button id="voice-play" type="button" aria-label="Play audio note">▶</button>
+                  <div id="voice-wave" class="voice-wave"><span id="voice-played" aria-hidden="true"></span><input id="voice-seek" type="range" min="0" max="90" step="0.1" value="0" aria-label="Audio note playback position"></div>
+                  <span id="voice-playback-time" class="mono">0:00</span>
+                </div>
+                <details class="voice-native"><summary>Playback controls</summary><audio id="voice-preview-audio" controls></audio></details>
+                <div><span id="voice-meta">Audio note ready</span><button id="voice-delete" class="text-button" type="button">Delete</button></div>
+              </div>
+            </div>
+            </details>
+            <div id="microphone-help" class="microphone-help hidden">
+              <p id="microphone-help-copy">Chrome could not allow the microphone in this sidebar. You can grant access in a permission tab, then return to your take.</p>
+              <button id="enable-microphone" class="button secondary" type="button">Allow microphone</button>
+              <p>Using your iPhone unexpectedly? In Chrome Settings → Privacy and security → Site settings → Microphone, select your Mac’s built-in microphone.</p>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <section id="discussion" class="discussion hidden">
+        <div class="section-heading">
+          <p class="eyebrow">ON THIS PAGE</p>
+          <span id="discussion-count">0 notes</span>
+        </div>
+        <div id="annotations" class="annotations"></div>
+        <a id="browse-feed" class="discussion-link" target="_blank" rel="noreferrer">Explore the feed ↗</a>
+      </section>
+      </div>
+    </main>
+    <footer id="compose-footer" class="compose-footer hidden">
+      <span id="signed-in" class="sr-only"></span>
+      <button id="publish" class="button primary" type="button" aria-describedby="publish-hint">Publish</button>
+      <p id="publish-hint" class="publish-hint" aria-live="polite"></p>
+    </footer>
+    <script type="module" src="panel.js"></script>
+  </body>
+</html>

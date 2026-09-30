@@ -1,0 +1,27 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.data/
+artifacts/*
+!artifacts/.gitkeep
+*.log
+.DS_Store
+coverage/
+web/fixtures/*.mp4
+web/fixtures/*.wav
+.neon
+
+.vercel/
+
+# Local credentials, editor settings and signing material
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite*
+*.db
+.codex/
+.agents/
+.idea/
+.vscode/

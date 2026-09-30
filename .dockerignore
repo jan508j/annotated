@@ -1,0 +1,12 @@
+.git
+.env
+.env.*
+.data
+artifacts
+node_modules
+research
+design
+test
+web/fixtures
+*.log
+.DS_Store

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Enable microphone · Annotated</title>
+    <link rel="stylesheet" href="panel.css">
+  </head>
+  <body>
+    <header class="masthead"><img src="icons/citrus/icon-32.png" width="28" height="28" alt=""><span class="wordmark">Annotated</span></header>
+    <main style="max-width: 560px; margin: 12px auto; padding: 18px 24px 24px">
+      <section class="session-card" aria-labelledby="setup-title">
+        <p class="eyebrow">MICROPHONE PERMISSION</p>
+        <h1 id="setup-title">Enable your microphone</h1>
+        <p>Chrome sometimes needs a normal tab to show this permission. Allow access here and we’ll return you to your source. Then click the microphone beside your take to start dictating.</p>
+        <p>This setup briefly activates the microphone to grant access, then stops it immediately. It does not record, save, or upload audio.</p>
+        <p>If you choose “Allow this time”, keep this tab open while using dictation. You can close it when you’re finished. Your draft stays in the sidebar.</p>
+        <div class="button-row">
+          <button id="enable-microphone" class="button primary" type="button">Allow microphone</button>
+          <button id="return-to-source" class="button secondary" type="button">Cancel</button>
+        </div>
+        <p id="microphone-status" class="notice hidden" role="status" aria-live="polite"></p>
+        <p id="microphone-help" class="support-note hidden"></p>
+        <p class="support-note">This uses Chrome’s default microphone. To use your Mac instead of your iPhone, choose its built-in microphone in Chrome Settings → Privacy and security → Site settings → Microphone before allowing access.</p>
+      </section>
+    </main>
+    <script type="module" src="microphone.js"></script>
+  </body>
+</html>

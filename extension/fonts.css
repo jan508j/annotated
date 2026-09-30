@@ -1,0 +1,29 @@
+/* Official Google Fonts distributions; OFL licenses accompany the font files. */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/instrument-serif.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/instrument-serif-italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./fonts/instrument-sans.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500 600;
+  font-display: swap;
+  src: url('./fonts/jetbrains-mono.ttf') format('truetype');
+}

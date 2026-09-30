@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5f1">
+  <meta name="description" content="Annotated keeps a source excerpt, a human take, and the original link together.">
+  <!-- social-preview -->
+  <title>Annotated — Open the source. Join the conversation.</title>
+  <link rel="icon" href="/web/logo/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/web/logo/favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="apple-touch-icon" href="/web/logo/apple-touch-icon.png" sizes="180x180">
+  <link rel="manifest" href="/web/site.webmanifest">
+  <link rel="stylesheet" href="/shared/marker-tokens.css">
+  <link rel="stylesheet" href="/shared/share-sheet.css">
+  <link rel="stylesheet" href="/web/styles.css">
+  <link rel="stylesheet" href="/web/article-editor.css">
+  <link rel="stylesheet" href="/web/feed-filters.css">
+  <link rel="stylesheet" href="/web/marker-home.css">
+  <link rel="stylesheet" href="/web/profile.css">
+  <link rel="stylesheet" href="/web/profile-editor.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Annotated home"><svg class="brand-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="26" class="logo-mark" fill="var(--mark, #f8ce73)"></rect><path d="M48 24H26V104H48M80 24H102V104H80" fill="none" stroke="#16161a" stroke-width="20"></path><circle cx="64" cy="64" r="16" fill="#16161a"></circle></svg><span>Annotated</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="/feed">Feed</a>
+      <a href="/install">Get the extension</a>
+    </nav>
+    <div id="session-control" class="session-control"></div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <div class="route-loading" role="status"><span class="spinner" aria-hidden="true"></span>Opening Annotated…</div>
+  </main>
+
+  <footer class="site-footer">
+    <div><a class="brand footer-brand" href="/"><svg class="brand-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="26" class="logo-mark" fill="var(--mark, #f8ce73)"></rect><path d="M48 24H26V104H48M80 24H102V104H80" fill="none" stroke="#16161a" stroke-width="20"></path><circle cx="64" cy="64" r="16" fill="#16161a"></circle></svg><span>Annotated</span></a><p>Keep the quote and the take close to the source.</p></div>
+    <nav aria-label="Footer navigation"><a href="/install">Extension</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>
+    <p class="local-note">Source excerpts and human commentary stay distinct</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/web/app.js"></script>
+</body>
+</html>
