@@ -45,10 +45,16 @@ export function feedPage({ el, api, session, annotationCard, signInHref, localNo
   let frame;
   let gate;
   let navHeight = 0;
+  let nextCursor = null;
+  let loading = false;
+  const shown = new Set();
   const buttons = {};
   const status = el('span', { class: 'feed-sr-status' });
   const list = el('div', { class: 'feed-grid' });
-  const results = el('section', { id: 'conversations', class: 'feed-results', 'aria-label': 'Annotations', 'aria-live': 'polite', 'aria-busy': 'true' }, status, list);
+  const moreError = el('p', { class: 'feed-more-error', hidden: true });
+  const more = el('button', { class: 'button feed-load-more', type: 'button', onclick: () => void load(true) }, 'Load more');
+  const pagination = el('div', { class: 'feed-pagination', hidden: true }, moreError, more);
+  const results = el('section', { id: 'conversations', class: 'feed-results', 'aria-label': 'Annotations', 'aria-live': 'polite', 'aria-busy': 'true' }, status, list, pagination);
   const audienceWrap = el('div', { class: 'feed-audience-wrap' });
   const filters = el('div', { class: 'feed-filter-bar' }, audienceWrap,
     el('span', { class: 'feed-filter-divider', 'aria-hidden': 'true' }),
@@ -128,35 +134,66 @@ export function feedPage({ el, api, session, annotationCard, signInHref, localNo
       ...['take', 'take short', 'meta', 'excerpt', 'excerpt short'].map(className => el('span', { class: `feed-skeleton-${className}` }))));
   }
 
-  async function load() {
+  async function load(append = false) {
+    if (append && (loading || !nextCursor)) return;
     request?.abort();
     clearTimeout(loadingTimer);
     const current = request = new AbortController();
+    const moveFocus = append && document.activeElement === more;
+    loading = true;
+    more.disabled = true;
+    more.textContent = append ? 'Loading…' : 'Load more';
+    moreError.hidden = true;
     results.setAttribute('aria-busy', 'true');
-    list.inert = true;
-    status.textContent = 'Loading annotations…';
-    loadingTimer = setTimeout(() => {
-      if (!disposed && request === current) list.replaceChildren(...skeletons());
-    }, 150);
+    status.textContent = append ? 'Loading more annotations…' : 'Loading annotations…';
+    if (!append) {
+      nextCursor = null;
+      shown.clear();
+      pagination.hidden = true;
+      list.inert = true;
+      loadingTimer = setTimeout(() => {
+        if (!disposed && request === current) list.replaceChildren(...skeletons());
+      }, 150);
+    }
     try {
-      const { annotations = [] } = await api(feedPath(state).replace('/feed', '/api/feed'), { signal: current.signal });
+      const url = new URL(feedPath(state).replace('/feed', '/api/feed'), location.origin);
+      url.searchParams.set('limit', '15');
+      if (append) url.searchParams.set('cursor', nextCursor);
+      const { annotations = [], nextCursor: after = null } = await api(url.pathname + url.search, { signal: current.signal });
       if (disposed || request !== current) return;
-      if (annotations.length) list.replaceChildren(...annotations.map(annotationCard));
+      const added = annotations.filter(annotation => !shown.has(annotation.id));
+      const cards = added.map(annotation => annotationCard(annotation, { following: annotation.isFollowing }));
+      if (append) list.append(...cards);
+      else if (cards.length) list.replaceChildren(...cards);
       else {
         const empty = filteredEmpty(state);
         list.replaceChildren(empty ? el('div', { class: 'feed-filter-empty' }, el('p', {}, empty.text),
           el('button', { class: 'button', type: 'button', onclick: () => select(empty.group, empty.value, true) }, empty.action))
           : el('div', { class: 'empty-state' }, el('p', {}, 'Nothing marked yet.'), el('a', { class: 'button primary', href: '/install' }, 'Add to Chrome')));
       }
-      status.textContent = feedStatus(state);
+      added.forEach(annotation => shown.add(annotation.id));
+      nextCursor = after;
+      pagination.hidden = !nextCursor;
+      more.textContent = 'Load more';
+      status.textContent = `${feedStatus(state)}. ${shown.size} loaded.${append ? ` ${added.length} more added.` : ''}${nextCursor ? '' : ' All available annotations loaded.'}`;
+      if (moveFocus) (cards[0] || (!nextCursor ? list.lastElementChild : more))?.focus({ preventScroll: true });
     } catch (error) {
       if (disposed || current.signal.aborted || request !== current) return;
-      list.replaceChildren(el('div', { class: 'feed-filter-empty feed-load-error' }, el('p', {}, 'The feed couldn’t load.'),
-        el('span', { class: 'muted' }, error.message), el('button', { class: 'button', type: 'button', onclick: () => void load() }, 'Try again')));
-      status.textContent = 'The feed couldn’t load. Try again.';
+      if (append) {
+        moreError.textContent = 'Couldn’t load more annotations. Your place is saved.';
+        moreError.hidden = false;
+        more.textContent = 'Try again';
+        status.textContent = 'Couldn’t load more annotations. Try again.';
+      } else {
+        list.replaceChildren(el('div', { class: 'feed-filter-empty feed-load-error' }, el('p', {}, 'The feed couldn’t load.'),
+          el('span', { class: 'muted' }, error.message), el('button', { class: 'button', type: 'button', onclick: () => void load() }, 'Try again')));
+        status.textContent = 'The feed couldn’t load. Try again.';
+      }
     } finally {
       if (!disposed && request === current) {
         clearTimeout(loadingTimer);
+        loading = false;
+        more.disabled = false;
         results.setAttribute('aria-busy', 'false');
         list.inert = false;
       }

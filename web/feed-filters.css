@@ -21,6 +21,12 @@ body[data-route="feed"] .site-header { position: sticky; top: 0; background: var
 .feed-filter-divider { width: 1px; height: 24px; background: var(--disabled); flex-shrink: 0; }
 .feed-sort-label { margin-left: auto; white-space: nowrap; font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--meta); }
 .feed-results { min-height: 260px; }
+.feed-pagination { display: grid; justify-items: center; gap: 16px; padding: 32px 0 0; border-top: 1px solid var(--line); overflow-anchor: none; }
+.feed-pagination[hidden], .feed-more-error[hidden] { display: none; }
+.feed-load-more { min-width: 148px; min-height: 44px; transition: transform var(--motion-press) ease, background-color var(--motion-row) ease, color var(--motion-row) ease; }
+.feed-load-more:hover:not(:disabled) { background: var(--ink); color: var(--surface); }
+.feed-load-more:active:not(:disabled) { transform: scale(.97); }
+.feed-more-error { margin: 0; color: var(--muted); font-size: 14px; text-align: center; }
 .feed-sr-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .feed-filter-empty { border-top: 1px solid var(--line); padding: 64px 0 24px; display: flex; align-items: flex-start; flex-direction: column; gap: 22px; }
 .feed-filter-empty > p { max-width: 520px; margin: 0; color: var(--ink); font: 400 36px/1.15 var(--serif); letter-spacing: -.005em; text-wrap: pretty; }
@@ -68,7 +74,7 @@ body[data-route="feed"] .site-header { position: sticky; top: 0; background: var
 }
 @media (prefers-reduced-motion: reduce) {
   .feed-skeleton { animation: none; }
-  .feed-radio-group button, .feed-filter-empty .button, .feed-signin-prompt a, .feed-signin-prompt button { transition: none; }
+  .feed-radio-group button, .feed-filter-empty .button, .feed-signin-prompt a, .feed-signin-prompt button, .feed-load-more { transition: none; }
 }
 /* Match the title-row action in the supplied final screenshot. */
 .feed-heading .feed-write { padding: 14px 22px; font-size: 15px; }

@@ -393,6 +393,16 @@ function safeLimit(url) {
   const value = Number(url.searchParams.get('limit') || 50);
   return Number.isInteger(value) && value > 0 ? Math.min(value, 100) : 50;
 }
+function feedCursor(value) {
+  if (value === null) return null;
+  try {
+    if (value.length > 512 || !/^[A-Za-z0-9_-]+$/.test(value)) throw new Error();
+    const cursor = JSON.parse(Buffer.from(value, 'base64url').toString('utf8'));
+    if (typeof cursor?.createdAt !== 'string' || new Date(cursor.createdAt).toISOString() !== cursor.createdAt
+      || typeof cursor.id !== 'string' || !/^[A-Za-z0-9_-]{1,100}$/.test(cursor.id)) throw new Error();
+    return cursor;
+  } catch { throw new HttpError(400, 'Invalid feed cursor. Reload the feed and try again.'); }
+}
 async function getAnnotation(db, annotationId, { includeHidden = false } = {}) {
   return (await db.prepare(`${ANNOTATION_SELECT} WHERE a.id = ? ${includeHidden ? '' : 'AND a.hidden = 0 AND a.deleted = 0'}`).get(annotationId));
 }
@@ -918,14 +928,23 @@ export function createServer(options = {}) {
         if (!['everyone', 'following'].includes(audience)) throw new HttpError(400, 'Feed audience must be everyone or following.');
         const formatClause = type === 'all' ? '' : ' AND s.kind = ?';
         const parameters = type === 'all' ? [] : [kinds[type]];
+        const cursor = feedCursor(url.searchParams.get('cursor'));
+        const cursorClause = cursor ? ' AND (a.created_at < ? OR (a.created_at = ? AND a.id < ?))' : '';
+        if (cursor) parameters.push(cursor.createdAt, cursor.createdAt, cursor.id);
+        const user = await authenticate(db, req, { required: audience === 'following' });
         let rows;
         if (audience === 'following') {
-          const user = await authenticate(db, req);
-          rows = (await db.prepare(`${ANNOTATION_SELECT} JOIN follows f ON f.followed_id = a.author_id AND f.follower_id = ? WHERE a.hidden = 0 AND a.deleted = 0${formatClause} ORDER BY a.created_at DESC, a.id DESC LIMIT ?`).all(user.id, ...parameters, limit));
+          rows = (await db.prepare(`${ANNOTATION_SELECT} JOIN follows f ON f.followed_id = a.author_id AND f.follower_id = ? WHERE a.hidden = 0 AND a.deleted = 0${formatClause}${cursorClause} ORDER BY a.created_at DESC, a.id DESC LIMIT ?`).all(user.id, ...parameters, limit + 1));
         } else {
-          rows = (await db.prepare(`${ANNOTATION_SELECT} WHERE a.hidden = 0 AND a.deleted = 0${formatClause} ORDER BY a.created_at DESC, a.id DESC LIMIT ?`).all(...parameters, limit));
+          rows = (await db.prepare(`${ANNOTATION_SELECT} WHERE a.hidden = 0 AND a.deleted = 0${formatClause}${cursorClause} ORDER BY a.created_at DESC, a.id DESC LIMIT ?`).all(...parameters, limit + 1));
         }
-        return json(res, 200, { annotations: rows.map(annotationObject) });
+        const page = rows.slice(0, limit);
+        const last = page.at(-1);
+        const nextCursor = rows.length > limit ? Buffer.from(JSON.stringify({ createdAt: last.created_at, id: last.id })).toString('base64url') : null;
+        // Cards only need Follow/Following, not a separate full profile and its annotations.
+        const authorIds = [...new Set(page.map(row => row.author_id))];
+        const followed = new Set(user && authorIds.length ? (await db.prepare(`SELECT followed_id FROM follows WHERE follower_id = ? AND followed_id IN (${authorIds.map(() => '?').join(',')})`).all(user.id, ...authorIds)).map(row => row.followed_id) : []);
+        return json(res, 200, { annotations: page.map(row => ({ ...annotationObject(row), isFollowing: followed.has(row.author_id) })), nextCursor });
       }
 
       if (req.method === 'POST' && path === '/api/sources/lookup') {

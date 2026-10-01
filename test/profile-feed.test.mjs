@@ -153,6 +153,52 @@ test('profile people lists distinguish followers from following and expose only 
   }
 });
 
+test('feed pages stay ordered across equal timestamps, new posts, deletions and filtered following', async t => {
+  const { db, request, mira } = await setup(t);
+  const at = '2026-10-01T10:00:00.000Z';
+  for (const kind of ['article', 'video']) db.prepare('INSERT INTO sources VALUES (?,?,?,?,?,?,?)')
+    .run(kind, kind, `https://example.test/${kind}`, 'Local pagination fixture', kind, '', at);
+  const insert = (id, author = 'demo-leo', kind = 'article', hidden = 0, deleted = 0, date = at) => db.prepare(`INSERT INTO annotations
+    (id,client_id,author_id,source_id,excerpt,commentary,is_demo,hidden,deleted,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)`)
+    .run(id, id, author, kind, 'Local fixture evidence', 'Local fixture take', 1, hidden, deleted, date);
+  const expected = Array.from({ length: 32 }, (_, i) => `page-${String(32 - i).padStart(2, '0')}`);
+  expected.forEach(id => insert(id));
+  insert('hidden', 'demo-leo', 'article', 1); insert('deleted', 'demo-leo', 'article', 0, 1);
+  const first = (await request('/api/feed?limit=15')).data;
+  assert.deepEqual(first.annotations.map(a => a.id), expected.slice(0, 15));
+  assert.ok(first.annotations.every(a => a.isFollowing === false));
+  assert.equal(typeof first.nextCursor, 'string');
+  // Moving the head or removing the page boundary must not skip/duplicate older rows.
+  insert('newer', 'demo-leo', 'article', 0, 0, '2026-10-01T11:00:00.000Z');
+  db.prepare('UPDATE annotations SET deleted = 1 WHERE id = ?').run(expected[14]);
+  const second = (await request(`/api/feed?limit=15&cursor=${first.nextCursor}`)).data;
+  assert.deepEqual(second.annotations.map(a => a.id), expected.slice(15, 30));
+  const third = (await request(`/api/feed?limit=15&cursor=${second.nextCursor}`)).data;
+  assert.deepEqual(third.annotations.map(a => a.id), expected.slice(30));
+  assert.equal(third.nextCursor, null);
+
+  for (const id of ['video-1', 'video-2', 'video-3']) insert(id, 'demo-leo', 'video');
+  insert('video-other', 'demo-mira', 'video');
+  await request('/api/users/demo-leo/follow', { following: true }, mira);
+  const filter = '/api/feed?audience=following&format=video&limit=2';
+  const followed = (await request(filter, undefined, mira)).data;
+  assert.deepEqual(followed.annotations.map(a => a.id), ['video-3', 'video-2']);
+  assert.ok(followed.annotations.every(a => a.isFollowing === true));
+  const last = (await request(`${filter}&cursor=${followed.nextCursor}`, undefined, mira)).data;
+  assert.deepEqual(last.annotations.map(a => a.id), ['video-1']);
+  assert.equal(last.nextCursor, null);
+  assert.equal((await request(`${filter}&cursor=${followed.nextCursor}`)).status, 401);
+  const exact = (await request('/api/feed?format=video&limit=4')).data;
+  assert.equal(exact.annotations.length, 4); assert.equal(exact.nextCursor, null);
+  const signedIn = (await request('/api/feed?format=video&limit=4', undefined, mira)).data;
+  assert.ok(signedIn.annotations.every(a => a.isFollowing === (a.author.id === 'demo-leo')));
+  assert.deepEqual((await request('/api/feed?format=audio&limit=15')).data, { annotations: [], nextCursor: null });
+  for (const cursor of ['', 'garbage', 'a'.repeat(513), Buffer.from('{"createdAt":"bad","id":"page-01"}').toString('base64url'),
+    Buffer.from(JSON.stringify({ createdAt: at, id: "' OR 1=1" })).toString('base64url')]) {
+    assert.equal((await request('/api/feed?cursor=' + cursor)).status, 400);
+  }
+});
+
 test('profile people lists paginate deterministically without truncating large lists', async t => {
   const { db, request } = await setup(t);
   const ids = Array.from({ length: 53 }, (_, i) => `list-fixture-${String(i).padStart(2,'0')}`);

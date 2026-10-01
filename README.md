@@ -13,7 +13,7 @@ This is the source handoff for version **0.1.24**. It contains the application, 
 - Article annotations with up to five passages from one source, within 100 words total.
 - Explicit video or audio capture, up to 90 seconds; published video is limited to 240 pixels high.
 - Typed takes, speech-to-text dictation, and separately labeled optional audio notes.
-- Public receipts, replies, source discussions, profiles, follows, and Text/Video/Audio feed filters.
+- Public receipts, replies, source discussions, profiles, follows, and Text/Video/Audio feed filters, with 15 annotations per page and a Load more button.
 - Wide and Tall PNG cards; Post to X opens an editable draft for the user to send.
 - Responsive reading and an article editor on phones. Video/audio source capture requires desktop Chrome.
 - Google/X sign-in in production, with clearly labeled test identities for local development.
@@ -61,7 +61,7 @@ node scripts/smoke.mjs
 
 The smoke check uses generated video/audio, publishes labeled local examples, adds a second-account reply, follows an author, verifies byte-range playback, and checks ownership and private claim access. It refuses a non-loopback target. Results are written to ignored `artifacts/smoke/`.
 
-This source handoff passes **192 tests** and **82 JavaScript syntax checks** (including its generated-preview script). These cover capture state, cancellation, stale source updates, dictation, auth/ownership, filtering, profiles, sharing, uploads and media limits. They complement real Chrome capture and microphone testing; they do not replace it. The optional manual GitHub workflow runs the same tests without deployment credentials.
+This source handoff passes **193 tests** and **82 JavaScript syntax checks** (including its generated-preview script). These cover capture state, cancellation, stale source updates, dictation, auth/ownership, filtering, profiles, sharing, uploads and media limits. They complement real Chrome capture and microphone testing; they do not replace it. The optional manual GitHub workflow runs the same tests without deployment credentials.
 
 Tests rebuild package fixtures. Run `npm run package` again after testing before loading a local extension; rebuild a production package last if deploying your own instance.
 
